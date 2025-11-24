@@ -12,7 +12,7 @@ export const createTechnicianSchema = z.object({
 export const updateTechnicianSchema = z.object({
   params: z.object({ id: z.string().transform((v) => parseInt(v, 10)) }),
   body: z.object({
-    skill_level: z.string().optional(),
+    skill_level: z.enum(["junior", "field", "master"]).optional(),
     hourly_rate: z.number().optional(),
     active: z.boolean().optional()
   })

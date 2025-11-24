@@ -7,6 +7,8 @@
     "dev": "nodemon --watch src --ext ts --exec ts-node src/server.ts",
     "build": "tsc -p tsconfig.json",
     "start": "node dist/server.js",
+    "migrate": "ts-node src/scripts/migrate.ts",
+    "seed": "ts-node src/scripts/seed.ts",
     "test": "vitest run",
     "lint": "echo 'No linter configured'"
   },

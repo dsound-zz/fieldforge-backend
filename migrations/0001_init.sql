@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS job_assignments (
     UNIQUE(job_id, technician_id),
     CONSTRAINT no_overlapping_assignments EXCLUDE USING gist (
         technician_id WITH =,
-        tsrange(scheduled_start, scheduled_end) WITH &&
+        tstzrange(scheduled_start, scheduled_end) WITH &&
     )
 );
 CREATE INDEX IF NOT EXISTS idx_job_assignments_technician ON job_assignments(technician_id);

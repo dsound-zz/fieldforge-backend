@@ -59,3 +59,23 @@ export const getUserById = async (id: number): Promise<User> => {
   if (!row) throw notFound("User", id);
   return toUser(row);
 };
+
+
+export async function getMaxUserNumber(role: string): Promise<number> {
+  const result = await pool.query(
+    `SELECT email FROM users WHERE role = $1 AND email LIKE $2`,
+    [role, `${role}%@fieldforge.test`]
+  );
+
+  if (result.rows.length === 0) return 0;
+
+  // Extract numbers from emails like "technician5@fieldforge.test"
+  const numbers = result.rows
+    .map((row) => {
+      const match = row.email.match(new RegExp(`${role}(\\d+)@fieldforge\\.test`));
+      return match ? parseInt(match[1], 10) : 0;
+    })
+    .filter((n) => !isNaN(n));
+
+  return numbers.length > 0 ? Math.max(...numbers) : 0;
+}
