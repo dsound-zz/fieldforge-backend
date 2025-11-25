@@ -14,8 +14,7 @@ export const create = async (req: Request, res: Response, next: NextFunction) =>
 export const list = async (req: Request, res: Response, next: NextFunction) => {
   try {
 
-    const page = parseInt(req.query.page as string) || 1;
-    const limit = parseInt(req.query.limit as string) || 20;
+    const { page, limit } = req.validated!.query
     const user = req.user
 
     const offset = (page - 1) * limit;
