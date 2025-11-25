@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { assignTechnician, completeJob, createJob, getJobById, getPagination, listJobs, startJob } from "./service";
+import { assignTechnician, completeJob, createJob, getJobById, listJobs, startJob } from "./service";
 
 export const create = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -13,18 +13,18 @@ export const create = async (req: Request, res: Response, next: NextFunction) =>
 
 export const list = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const user = req.user;
+
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 20;
+    const user = req.user
 
     const offset = (page - 1) * limit;
 
-    const jobs = await listJobs(user);
+    const results = await listJobs({ limit, offset }, user)
 
-    const results = await getPagination({ limit, offset })
-
-    res.json({ page, limit, jobs });
+    res.status(200).json({ page, limit, jobs: results.jobs, totalJobs: results.total });
   } catch (err) {
+    console.error("Error in list function:", err);
     next(err);
   }
 };

@@ -17,52 +17,51 @@ export const createJob = async (customer_id: number, description: string): Promi
   return job;
 };
 
-export const listJobs = async (user?: RequestUser): Promise<Job[]> => {
-  if (user && user.role === "technician") {
-    const result = await pool.query(
-      `SELECT j.*
+export const listJobs = async ({ limit, offset }: { limit: number; offset: number }, user?: RequestUser | null): Promise<{ jobs: Job[], total: number }> => {
+  const client = await pool.connect()
+
+  const technicianJobsQuery =
+    `SELECT j.*
        FROM jobs j
        JOIN job_assignments ja ON ja.job_id = j.id
        JOIN technicians t ON t.id = ja.technician_id
        WHERE t.user_id = $1
-       ORDER BY j.created_at DESC`,
-      [user.id]
-    );
-    return result.rows;
-  }
+       ORDER BY j.created_at DESC
+       LIMIT $2 OFFSET $3`;
 
-  const result = await pool.query("SELECT * FROM jobs ORDER BY created_at DESC");
-  return result.rows;
-};
-
-export async function getPagination({ limit, offset }: { limit: number; offset: number }) {
-  const client = await pool.connect()
-
-  try {
-    const jobsQuery = `
+  const jobsQuery = `
     SELECT * FROM jobs
     ORDER BY created_at DESC
     LIMIT $1 OFFSET $2
     `;
 
+  const countQuery = `SELECT COUNT(*) FROM jobs`;
 
-    const countQuery = `SELECT COUNT(*) FROM jobs`;
-
-    const [jobsRes, countRes] = await Promise.all([
+  try {
+    const [jobsRes, technicianJobsRes, countRes] = await Promise.all([
       client.query(jobsQuery, [limit, offset]),
+      user?.role === "technician" && user?.id
+        ? client.query(technicianJobsQuery, [user.id, limit, offset])
+        : Promise.resolve({ rows: [] }),
       client.query(countQuery),
     ])
 
+    const listObj = { total: parseInt(countRes.rows[0].count) }
+
+    if (user?.role === "technician") return { jobs: technicianJobsRes.rows, ...listObj }
+
     return {
       jobs: jobsRes.rows,
-      total: parseInt(countRes.rows[0].count)
+      ...listObj
     }
-
   } finally {
     client.release()
   }
 
-}
+};
+
+
+
 
 export const getJobById = async (id: number, user?: RequestUser): Promise<Job> => {
   const jobResult = await pool.query("SELECT * FROM jobs WHERE id = $1", [id]);
