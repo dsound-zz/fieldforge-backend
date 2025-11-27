@@ -2,11 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { config } from "../config/env";
 import { unauthorized, forbidden } from "../utils/errors";
-
-export type RequestUser = {
-  id: number;
-  role: string;
-};
+import { RequestUser } from "../types/express";
 
 export const authenticate = (req: Request, _res: Response, next: NextFunction) => {
   const header = req.headers.authorization;

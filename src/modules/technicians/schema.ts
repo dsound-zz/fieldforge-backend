@@ -17,3 +17,10 @@ export const updateTechnicianSchema = z.object({
     active: z.boolean().optional()
   })
 });
+
+export const listTechniciansSchema = z.object({
+  query: z.object({
+    active: z.coerce.boolean().optional(),
+    skill_level: z.enum(["junior", "field", "master"]).optional(),
+  })
+})

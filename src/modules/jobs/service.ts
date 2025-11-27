@@ -1,7 +1,7 @@
 import { pool } from "../../config/db";
 import { logger } from "../../config/logger";
 import { AppError, forbidden, notFound } from "../../utils/errors";
-import { RequestUser } from "../../middleware/auth";
+import { RequestUser } from "../../types/express";
 import { Job } from "./types";
 
 export const createJob = async (customer_id: number, description: string): Promise<Job> => {

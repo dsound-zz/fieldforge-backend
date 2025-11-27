@@ -2,10 +2,25 @@ import { pool } from "../../config/db";
 import { AppError, notFound } from "../../utils/errors";
 import { Technician } from "./types";
 
-export const listTechnicians = async (): Promise<Technician[]> => {
-  const result = await pool.query("SELECT * FROM technicians ORDER BY id");
-  return result.rows;
-};
+export const listTechnicians = async ({ isActive, skillLevel }: { isActive?: boolean; skillLevel?: string }): Promise<Technician[]> => {
+
+  const clauses: string[] = [];
+  const values: Array<boolean | string> = [];
+
+  if (isActive !== undefined) {
+    clauses.push(`active = $${values.length + 1}`);
+    values.push(isActive);
+  }
+  if (skillLevel) {
+    clauses.push(`skill_level = $${values.length + 1}`);
+    values.push(skillLevel);
+  }
+
+  const where = clauses.length ? `WHERE ${clauses.join(" AND ")}` : "";
+  const result = await pool.query(`SELECT * FROM technicians ${where} ORDER BY id`, values)
+
+  return result.rows
+}
 
 export const createTechnician = async (data: Omit<Technician, "id" | "created_at">): Promise<Technician> => {
   const result = await pool.query(

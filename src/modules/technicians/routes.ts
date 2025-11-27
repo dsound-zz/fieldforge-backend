@@ -2,11 +2,11 @@ import { Router } from "express";
 import { authenticate, requireRole } from "../../middleware/auth";
 import { validate } from "../../middleware/validate";
 import { create, list, update } from "./controller";
-import { createTechnicianSchema, updateTechnicianSchema } from "./schema";
+import { createTechnicianSchema, listTechniciansSchema, updateTechnicianSchema } from "./schema";
 
 const router = Router();
 
-router.get("/technicians", authenticate, list);
+router.get("/technicians", authenticate, validate(listTechniciansSchema), list);
 router.post("/technicians", authenticate, requireRole(["admin", "dispatcher"]), validate(createTechnicianSchema), create);
 router.patch(
   "/technicians/:id",

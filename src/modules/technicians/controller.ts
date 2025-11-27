@@ -1,9 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import { createTechnician, listTechnicians, updateTechnician } from "./service";
 
-export const list = async (_req: Request, res: Response, next: NextFunction) => {
+export const list = async (req: Request, res: Response, next: NextFunction) => {
+  const { active, skill_level } = req.validated!.query ?? {}
+
   try {
-    const technicians = await listTechnicians();
+    const technicians = await listTechnicians({ isActive: active, skillLevel: skill_level });
     res.json({ technicians });
   } catch (err) {
     next(err);

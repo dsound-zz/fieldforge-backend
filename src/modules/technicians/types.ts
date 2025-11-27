@@ -6,3 +6,4 @@ export interface Technician {
   active: boolean;
   created_at: string;
 }
+

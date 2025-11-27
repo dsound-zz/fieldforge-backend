@@ -1,4 +1,7 @@
-import { RequestUser } from "../middleware/auth";
+export type RequestUser = {
+  id: number;
+  role: string;
+};
 
 declare global {
   namespace Express {
