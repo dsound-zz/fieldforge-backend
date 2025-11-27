@@ -24,3 +24,7 @@ export const updateCustomerSchema = z.object({
 export const customerIdParamSchema = z.object({
   params: z.object({ id: z.string().transform((v) => parseInt(v, 10)) })
 });
+
+export const softCustomerDeleteSchema = z.object({
+  params: z.object({ id: z.string().transform((v) => parseInt(v, 10)) })
+})

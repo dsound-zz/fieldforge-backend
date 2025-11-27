@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { createCustomer, getCustomerById, updateCustomer } from "./service";
+import { createCustomer, getCustomerById, softDeleteCustomer, updateCustomer } from "./service";
 
 export const create = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -31,3 +31,13 @@ export const update = async (req: Request, res: Response, next: NextFunction) =>
     next(err);
   }
 };
+
+export const softDelete = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.validated!.params
+    const customer = await softDeleteCustomer(id)
+    res.json({ customer })
+  } catch (err) {
+    next(err)
+  }
+}

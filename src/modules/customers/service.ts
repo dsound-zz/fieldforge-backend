@@ -11,7 +11,7 @@ export const createCustomer = async (data: Omit<Customer, "id" | "created_at">):
 };
 
 export const getCustomerById = async (id: number): Promise<Customer> => {
-  const result = await pool.query("SELECT * FROM customers WHERE id = $1", [id]);
+  const result = await pool.query("SELECT * FROM customers WHERE deleted_at IS NULL AND id = $1", [id]);
   const row = result.rows[0];
   if (!row) throw notFound("Customer", id);
   return row;
@@ -23,10 +23,19 @@ export const updateCustomer = async (id: number, data: Partial<Omit<Customer, "i
   const setClauses = fields.map((field, idx) => `${field} = $${idx + 2}`).join(", ");
   const values = Object.values(data);
   const result = await pool.query(
-    `UPDATE customers SET ${setClauses} WHERE id = $1 RETURNING *`,
+    `UPDATE customers SET ${setClauses} WHERE id = $1 AND deleted_at IS NULL RETURNING *`,
     [id, ...values]
   );
   const row = result.rows[0];
   if (!row) throw notFound("Customer", id);
   return row;
 };
+
+export const softDeleteCustomer = async (id: number): Promise<Customer> => {
+  const result = await pool.query(
+    `UPDATE customers SET deleted_at = NOW() WHERE id = $1 RETURNING *`, [id]
+  );
+  const row = result.rows[0]
+  if (!row) throw notFound("Customer", id);
+  return row;
+}
