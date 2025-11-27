@@ -1,7 +1,7 @@
 # FieldForge Backend Simulator — Junior Dev Task Pool
 
 ~~1. Add pagination parameters to `GET /jobs` (page, limit) with validation and default sorting by `created_at`.~~
-2. Implement filtering for `GET /technicians?active=true` and `skill_level`.
+~~2. Implement filtering for `GET /technicians?active=true` and `skill_level`.~~
 3. Add soft delete support for customers (e.g., `deleted_at` column) and hide deleted records from queries.
 4. Prevent assigning technicians to completed or invoiced jobs at the API validation layer.
 5. Add rate limiting middleware using `express-rate-limit` with sensible defaults.
