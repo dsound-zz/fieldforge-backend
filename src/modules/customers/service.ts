@@ -33,7 +33,7 @@ export const updateCustomer = async (id: number, data: Partial<Omit<Customer, "i
 
 export const softDeleteCustomer = async (id: number): Promise<Customer> => {
   const result = await pool.query(
-    `UPDATE customers SET deleted_at = NOW() WHERE id = $1 RETURNING *`, [id]
+    `UPDATE customers SET deleted_at = NOW() WHERE id = $1 AND deleted_at IS NULL RETURNING *`, [id]
   );
   const row = result.rows[0]
   if (!row) throw notFound("Customer", id);
