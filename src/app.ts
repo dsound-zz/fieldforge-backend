@@ -7,10 +7,12 @@ import scheduleRoutes from "./modules/schedules/routes";
 import billingRoutes from "./modules/billing/routes";
 import { requestLogger } from "./middleware/logger";
 import { errorHandler } from "./middleware/errorHandler";
+import { apiRateLimiter } from "./middleware/rateLimiter";
 
 const app = express();
 
 app.use(express.json());
+app.use(apiRateLimiter)
 app.use(requestLogger);
 
 app.get("/health", (_req, res) => {
