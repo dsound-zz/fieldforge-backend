@@ -4,8 +4,8 @@
 ~~2. Implement filtering for `GET /technicians?active=true` and `skill_level`.~~
 ~~3. Add soft delete support for customers (e.g., `deleted_at` column) and hide deleted records from queries.~~
 ~~4. Prevent assigning technicians to completed or invoiced jobs at the API validation layer.~~
-5. Add rate limiting middleware using `express-rate-limit` with sensible defaults.
-6. Create a `/health` route that checks database connectivity using a lightweight query.
+~~5. Add rate limiting middleware using `express-rate-limit` with sensible defaults.~~
+~~6. Create a `/health` route that checks database connectivity using a lightweight query.~~
 7. Add unit tests for job completion logic, including invoice creation and status transitions.
 8. Implement a weekly-hours report endpoint for technicians summarizing scheduled hours.
 9. Add ability to upload customer documents with mocked storage and metadata table.
