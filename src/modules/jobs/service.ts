@@ -61,8 +61,6 @@ export const listJobs = async ({ limit, offset }: { limit: number; offset: numbe
 };
 
 
-
-
 export const getJobById = async (id: number, user?: RequestUser): Promise<Job> => {
   const jobResult = await pool.query("SELECT * FROM jobs WHERE id = $1", [id]);
   const job = jobResult.rows[0];
@@ -82,7 +80,7 @@ export const getJobById = async (id: number, user?: RequestUser): Promise<Job> =
 };
 
 export const assignTechnician = async (
-  job_id: number,
+  requestedJob: Job,
   technician_id: number,
   scheduled_start: string,
   scheduled_end: string
@@ -92,10 +90,7 @@ export const assignTechnician = async (
   if (!technician) throw notFound("Technician", technician_id);
   if (!technician.active) throw new AppError("Technician is not active", 400);
 
-  const jobResult = await pool.query("SELECT status FROM jobs WHERE id = $1", [job_id]);
-  const job = jobResult.rows[0];
-  if (!job) throw notFound("Job", job_id);
-  if (job.status === "completed" || job.status === "invoiced") {
+  if (requestedJob.status === "completed" || requestedJob.status === "invoiced") {
     throw new AppError("Cannot assign technician to completed/invoiced job", 400);
   }
 
@@ -106,7 +101,7 @@ export const assignTechnician = async (
      SET scheduled_start = EXCLUDED.scheduled_start,
          scheduled_end = EXCLUDED.scheduled_end
      RETURNING *`,
-    [job_id, technician_id, scheduled_start, scheduled_end]
+    [requestedJob.id, technician_id, scheduled_start, scheduled_end]
   );
   return result.rows[0];
 };

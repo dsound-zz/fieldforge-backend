@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { assignTechnician, completeJob, createJob, getJobById, listJobs, startJob } from "./service";
+import { AppError } from "../../utils/errors";
 
 export const create = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -42,8 +43,11 @@ export const getById = async (req: Request, res: Response, next: NextFunction) =
 export const assign = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.validated!.params;
+    const requestedJob = await getJobById(id)
+    const jobStatus = requestedJob.status
+    if (jobStatus === 'completed' || jobStatus === 'invoiced') throw new AppError("Job is already completed or invoiced", 400)
     const { technician_id, scheduled_start, scheduled_end } = req.validated!.body;
-    const assignment = await assignTechnician(id, technician_id, scheduled_start, scheduled_end);
+    const assignment = await assignTechnician(requestedJob, technician_id, scheduled_start, scheduled_end);
     res.status(201).json({ assignment });
   } catch (err) {
     next(err);
