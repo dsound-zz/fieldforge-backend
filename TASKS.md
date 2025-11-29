@@ -6,7 +6,7 @@
 ~~4. Prevent assigning technicians to completed or invoiced jobs at the API validation layer.~~
 ~~5. Add rate limiting middleware using `express-rate-limit` with sensible defaults.~~
 ~~6. Create a `/health` route that checks database connectivity using a lightweight query.~~
-7. Add unit tests for job completion logic, including invoice creation and status transitions.
+~~7. Add unit tests for job completion logic, including invoice creation and status transitions.~~
 8. Implement a weekly-hours report endpoint for technicians summarizing scheduled hours.
 9. Add ability to upload customer documents with mocked storage and metadata table.
 10. Add per-user API keys with creation, revocation, and middleware authentication support.
