@@ -47,3 +47,31 @@ export const updateTechnician = async (
   if (!row) throw notFound("Technician", id);
   return row;
 };
+
+export const getWeeklyHoursReport = async ({
+  start,
+  end
+}: { start: Date; end: Date }): Promise<
+  { technician_id: number; hours: number }[]
+> => {
+  const query = `
+    SELECT 
+      ja.technician_id,
+      SUM(EXTRACT(EPOCH FROM (ja.scheduled_end - ja.scheduled_start)) / 3600) AS hours
+    FROM job_assignments ja 
+    JOIN jobs j ON j.id = ja.job_id
+    WHERE ja.scheduled_start >= $1
+      AND ja.scheduled_end < $2
+      AND j.status IN ('scheduled', 'in_progress', 'completed')
+    GROUP BY ja.technician_id
+    ORDER BY ja.technician_id
+  `;
+
+  const result = await pool.query(query, [start, end])
+
+  // Cast numeric to JS number 
+  return result.rows.map((row) => ({
+    technician_id: row.technician_id,
+    hours: Number(row.hours)
+  }))
+}

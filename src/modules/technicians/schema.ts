@@ -24,3 +24,16 @@ export const listTechniciansSchema = z.object({
     skill_level: z.enum(["junior", "field", "master"]).optional(),
   })
 })
+
+const weeklyHoursQueryInnerSchema = z.object({
+  start: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "start must be YYYY-MM-DD")
+    .optional()
+});
+
+export const weeklyHoursQuerySchema = z.object({
+  query: weeklyHoursQueryInnerSchema
+});
+
+export type WeeklyHoursQuery = z.infer<typeof weeklyHoursQueryInnerSchema>;
